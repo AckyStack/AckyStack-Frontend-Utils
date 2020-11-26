@@ -1,7 +1,7 @@
-import {Md5} from "ts-md5";
-// @ts-ignore
+import {Md5} from "ts-md5/dist/md5";
 import * as bcrypt from "bcryptjs";
-import * as cryptojs from 'crypto-js';
+import CryptoJS from 'crypto-js';
+
 
 interface EncryptionUtilsInterface {
     /**
@@ -37,11 +37,14 @@ export default class EncryptionUtilsImpl implements EncryptionUtilsInterface {
     }
 
     hashPasswd(username: string): string {
-        const salt = '$2a$12$' + String(cryptojs.SHA256('AckyStack' + username + this._text)).substring(0, 22)
+        //@ts-ignore
+        const salt = '$2a$12$' + String(CryptoJS.SHA256('AckyStack' + username + this._text)).substring(0, 22)
+        //@ts-ignore
         return Md5.hashStr(bcrypt.hashSync(this._text, salt)).toString()
     }
 
     sha256(): string {
-        return cryptojs.SHA256(this._text).toString()
+        //@ts-ignore
+        return CryptoJS.SHA256(this._text).toString()
     }
 }

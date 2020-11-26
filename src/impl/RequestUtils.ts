@@ -1,4 +1,4 @@
-import Axios, {AxiosInstance, AxiosPromise, AxiosResponse} from "axios";
+import Axios, {AxiosInstance, AxiosPromise, AxiosResponse} from 'axios'
 import * as QueryString from "qs";
 
 interface RequestUtilsInterface {

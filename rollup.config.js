@@ -1,38 +1,28 @@
 import typescript from 'rollup-plugin-typescript2'
-import babel from '@rollup/plugin-babel'
-import nodeResolve from "@rollup/plugin-node-resolve";
-import pkg from './package.json'
-import path from 'path'
-//import {terser} from "rollup-plugin-terser";
-
-const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts'];
-const resolve = (...args) => {
-    return path.resolve(__dirname, ...args)
-};
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs"
+import json from '@rollup/plugin-json'
+import nodePolyfills from 'rollup-plugin-node-polyfills';
+import { terser } from "rollup-plugin-terser";
 const plugins = [
     typescript({
-        tsconfig: 'tsconfig.json',
-        removeComments: true,
-        useTsconfigDeclarationDir: true,
+        include: [
+            "./src",
+            "./**/*.ts+(|x)",
+        ]
     }),
-    nodeResolve({
-        extensions,
-        modulesOnly: true
-    }),
-    babel({
-        exclude: 'node_modules/**',
-        extensions
-    }),
-    //terser(),
+    json(),
+    resolve({ preferBuiltins: true, mainFields: ['browser'] }),
+    commonjs(),
+    nodePolyfills(),
+
 ]
 
 export default {
-    input: resolve('src/index.ts'),
-    // output: [
-    //     {file: 'dist/ackystack-utils.js', format: 'umd', name: 'AckyStackUtils', sourcemap: true},
-    //     {file: 'dist/ackystack-utils.esm.js', format: 'esm', sourcemap: true},
-    //     {file: 'dist/ackystack-utils.iife.js', format: 'iife', sourcemap: true}
-    // ],
-    output: {file: resolve('./', pkg.main), format: 'esm'},
+    input: "./src/index.ts",
+    output: [
+        { file: ".\\dist\\ackystack-utils.bundle.js", sourcemap: true, name: "AckyStackUtils", format: 'iife' },
+        { file: ".\\dist\\ackystack-utils.min.js", sourcemap: true, name: "AckyStackUtils", format: 'iife', plugins: [terser()] },
+    ],
     plugins,
 }

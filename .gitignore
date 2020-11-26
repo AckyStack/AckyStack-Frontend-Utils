@@ -1,0 +1,20 @@
+.parcel-cache/
+coverage/
+dist/
+node_modules/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+yarn.lock
+# IntelliJ project files
+.idea/
+*.iml
+out
+gen

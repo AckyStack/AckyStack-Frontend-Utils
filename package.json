@@ -24,10 +24,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "test": "yarn jest --coverage",
-    "build": "yarn rollup -c",
-    "build:compress": "yarn rollup -c && yarn gzip-size dist/ackystack-util.min.js",
+    "build": "yarn rollup --config rollup.config.js",
+    "build:compress": "yarn rollup --config rollup.config.js && yarn gzip-size ./dist/ackystack-utils.min.js",
     "build:compat": "yarn rollup --config rollup.config.js",
-    "dev": "yarn rollup -c --watch",
+    "dev": "yarn rollup --config rollup.config.js --watch",
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {

@@ -10,7 +10,6 @@ A utility made for AckyStack front end developers. This utilities toolkit cloud 
 
 ##### NPM
 
-execute the following command
 
 ```npm install @ackystack/ackystack-utils```
 
@@ -18,7 +17,6 @@ execute the following command
 
 ##### YARN
 
-execute the following command
 
 ```yarn add @ackystack/ackystack-utils```
 
@@ -28,11 +26,15 @@ execute the following command
 
 Add one of the following tag in your HTML document.
 
-```<script src="https://cdn.jsdelivr.net/npm/@ackystack/ackystack-utils@latest/dist/ackystack-utils.min.js"></script>```
+```html
+<script src="https://cdn.jsdelivr.net/npm/@ackystack/ackystack-utils@latest/dist/ackystack-utils.min.js"></script>
+```
 
  or a specific version 
 
-```<script src="https://cdn.jsdelivr.net/npm/@ackystack/ackystack-utils@2.0.0/dist/ackystack-utils.min.js"></script>```
+```html
+<script src="https://cdn.jsdelivr.net/npm/@ackystack/ackystack-utils@2.0.0/dist/ackystack-utils.min.js"></script>
+```
 
 
 
@@ -86,19 +88,17 @@ Add one of the following tag in your HTML document.
 
 ```
 
-**more and more methods coming up ~**
+more and more methods coming up ~
 
----
 
 ## Contributing
 
 **All contributions are super welcome!**
 
----
 
 ## Contact us
 
-**Please contact us if you need any help or just chill out:**
+Please contact us if you need any help or just chill out:
 
 - **Skype Group (English support provided):** https://join.skype.com/PSa6F48kLSE9
 - **Telegram group (English support provided):** https://t.me/ackystack

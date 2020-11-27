@@ -1,17 +1,8 @@
 {
-  "name": "ackystack-utils",
+  "name": "@ackystack/ackystack-utils",
   "version": "2.0.0",
   "main": "dist/ackystack-utils.js",
   "unpkg": "dist/ackystack-utils.js",
-  "module": "dist/ackystack-utils.esm.js",
-  "exports": {
-    "./jsx-runtime": {
-      "main": "./dist/ackystack-utils.esm.js"
-    },
-    "./jsx-dev-runtime": {
-      "main": "./dist/ackystack-utils.esm.js"
-    }
-  },
   "typings": "dist/types/index.d.ts",
   "files": [
     "src/**/*",
@@ -19,12 +10,12 @@
     "dist/*.map",
     "index.d.ts"
   ],
-  "repository": "https://github.com/AckyStack/AckyStack-JS-Utils/tree/next",
+  "repository": "https://github.com/AckyStack/AckyStack-Frontend-Utils",
   "author": "Xuanzi An",
   "license": "Apache-2.0",
   "scripts": {
     "test": "yarn jest --coverage",
-    "build": "yarn rollup --config rollup.config.js",
+    "build": "yarn rollup --config rollup.config.js && yarn gzip-size ./dist/ackystack-utils.min.js",
     "build:compress": "yarn rollup --config rollup.config.js && yarn gzip-size ./dist/ackystack-utils.min.js",
     "build:compat": "yarn rollup --config rollup.config.js",
     "dev": "yarn rollup --config rollup.config.js --watch",

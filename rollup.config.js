@@ -16,14 +16,12 @@ const plugins = [
     resolve({preferBuiltins: true, mainFields: ['browser']}),
     commonjs(),
     nodePolyfills(),
-
 ]
-
 
 export default {
     input: "./src/index.ts",
     output: [
-        {file: "./dist/ackystack-utils.bundle.js", sourcemap: true, name: "AckyStackUtils", format: 'iife'},
+        {file: "./dist/ackystack-utils.js", sourcemap: true, name: "AckyStackUtils", format: 'iife'},
         {
             file: "./dist/ackystack-utils.min.js",
             sourcemap: true,

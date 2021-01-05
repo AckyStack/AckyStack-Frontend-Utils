@@ -1,201 +1,211 @@
+import FormValidator from "./ValidationUtils";
+import CodecUtils from "./CodecUtils";
 import {AxiosInstance, AxiosPromise} from "axios";
-import CodecUtilsImpl from "./impl/CodecUtils";
-import EncryptionUtilsImpl from "./impl/EncryptionUtils";
-import RequestUtilsImpl from "./impl/RequestUtils";
+import EncryptionUtils from "./EncryptionUtils";
+import RequestUtils from "./RequestUtils";
+import {rulesRegex} from "./ValidationUtils/rules";
 
-
-interface RequestUtils {
-    /**
-     * Send post request to server
-     * @param url - The url that you want send request to
-     * @param data - The data that you want include in parameter
-     * @param isForm - (default true) If true will use header 'content-type: application/x-www-form-urlencoded', otherwise will put json data in body
-     */
-    post(url: string, data: object, isForm?: boolean): AxiosPromise;
-
-    /**
-     * Send get request to server
-     * @param url - The url that you want send request to
-     * @param data - The data that you want include in url query
-     */
-    get(url: string, data?: object): AxiosPromise;
-
-    /**
-     * Get Axios Instance to customize more things!
-     */
-    instance(): AxiosInstance
+interface Configuration {
+    debug?: boolean,
+    requestCustomFeedback?: RequestCustomFeedback,
+    formValidationCustomFeedback?: FormValidationCustomFeedback
 }
 
-interface CodecUtils {
-    /**
-     * Base64 Encode
-     * @param str - the text you want encode
-     * @return the encoded string
-     */
-    base64Encode(str: string): string;
+interface RequestCustomFeedback {
+    onSuccess: onSuccess,
 
-    /**
-     * Base64 Decode
-     * @param str - the text you want decode
-     * @return the decoded string
-     */
-    base64Decode(str: string): string;
+    onError: onError,
+
+    onInfo: onInfo,
+
+    onWarning: onWarning
 }
 
-interface EncryptionUtils {
-    /**
-     * MD5 Encryption (32bit lower case)
-     * @param str plain text that you want encrypt
-     * @return encrypted string
-     */
+interface FormValidationCustomFeedback {
+    onValid: onValid,
+
+    onInvalid: onInvalid
+}
+
+export default class AckyStackUtils {
+    private configuration: Configuration = {
+        debug: false,
+        requestCustomFeedback: {
+            onError: message => {
+                console.error(`错误: ${message}`)
+                alert(`错误: ${message}`)
+            },
+            onInfo: message => {
+                console.info(`信息: ${message}`)
+                alert(`信息: ${message}`)
+            },
+            onSuccess: message => {
+                console.log(`成功: ${message}`)
+                alert(`成功: ${message}`)
+            },
+            onWarning: message => {
+                console.warn(`警告：${message}`)
+                alert(`警告: ${message}`)
+            }
+        },
+        formValidationCustomFeedback: {
+            onValid: () => {
+                console.log('表单验证成功! ');
+            },
+            onInvalid: message => {
+                console.error(`表单验证错误: ${message}`);
+            }
+        }
+    };
+
+    constructor(configuration?: Configuration) {
+        if (configuration !== undefined || null) {
+
+            if (configuration.debug !== undefined || null) {
+                this.configuration.debug = configuration.debug
+            }
+
+            if (configuration.requestCustomFeedback !== undefined || null) {
+                if (configuration.requestCustomFeedback.onError !== undefined || null) {
+                    this.configuration.requestCustomFeedback.onError = configuration.requestCustomFeedback.onError;
+                }
+
+                if (configuration.requestCustomFeedback.onWarning !== undefined || null) {
+                    this.configuration.requestCustomFeedback.onWarning = configuration.requestCustomFeedback.onWarning;
+                }
+
+                if (configuration.requestCustomFeedback.onInfo !== undefined || null) {
+                    this.configuration.requestCustomFeedback.onInfo = configuration.requestCustomFeedback.onInfo;
+                }
+
+                if (configuration.requestCustomFeedback.onSuccess !== undefined || null) {
+                    this.configuration.requestCustomFeedback.onSuccess = configuration.requestCustomFeedback.onSuccess;
+                }
+            }
+
+            if (configuration.formValidationCustomFeedback !== undefined || null) {
+                if (configuration.formValidationCustomFeedback.onInvalid === undefined || null) {
+                    this.configuration.formValidationCustomFeedback.onInvalid = configuration.formValidationCustomFeedback.onInvalid;
+                }
+
+                if (configuration.formValidationCustomFeedback.onValid === undefined || null) {
+                    this.configuration.formValidationCustomFeedback.onValid = configuration.formValidationCustomFeedback.onValid;
+                }
+            }
+            
+        }
+
+        if (this.configuration.debug) {
+            console.log('AckyStackUtils 实例初始化成功！');
+        }
+    }
+
+    FormValidationUtils() {
+        return new FormValidator(() => this.configuration.formValidationCustomFeedback.onValid(),
+            msg => this.configuration.formValidationCustomFeedback.onInvalid(msg))
+    }
+
+    CodecUtils(): CodecUtilsType {
+        return <CodecUtilsType>{
+            base64Encode: str => {
+                const result: string = new CodecUtils(str).base64Encode();
+                if (this.configuration.debug) console.log(`Base64 Encode Result: ${result}`)
+                return result
+            },
+            base64Decode: str => {
+                const result: string = new CodecUtils(str).base64Decode();
+                if (this.configuration.debug) console.log(`Base64 Decode Result: ${result}`)
+                return result
+            }
+        }
+    }
+
+    EncryptionUtils(): EncryptionUtilsType {
+        return <EncryptionUtilsType>{
+            md5Encrypt: str => {
+                const result: string = new EncryptionUtils(str).md5();
+                if (this.configuration.debug) console.log(`MD5 Encryption Result: ${result}`)
+                return result;
+            },
+            passwordEncrypt: (username: string, password: string) => {
+                const result: string = new EncryptionUtils(password).encryptPassword(username);
+                if (this.configuration.debug) console.log(`Password Encryption Result: ${result}`)
+                return result;
+            },
+            sha256Encrypt: str => {
+                const result: string = new EncryptionUtils(str).sha256();
+                if (this.configuration.debug) console.log(`SHA256 Encryption Result: ${result}`)
+                return result;
+            }
+        }
+    }
+
+    HttpClient(): HttpClientUtilsType {
+        const that = this;
+        const client = new RequestUtils({
+            success: message => {
+                that.configuration.requestCustomFeedback.onSuccess(message);
+            },
+            error: message => {
+                that.configuration.requestCustomFeedback.onError(message);
+            },
+            info: message => {
+                that.configuration.requestCustomFeedback.onInfo(message);
+            },
+            warn: message => {
+                that.configuration.requestCustomFeedback.onWarning(message);
+            }
+        })
+        return <HttpClientUtilsType>{
+            postRequest: (url, data, isForm): AxiosPromise => {
+                if (!isForm) {
+                    client.postWithBody(url, data);
+                }
+                return client.post(url, data);
+            },
+            getRequest: (url, data): AxiosPromise => {
+                return client.get(url, data);
+            },
+            instance: (): AxiosInstance => {
+                return client.instance();
+            }
+        }
+    }
+
+    regexValidator(value: string, regex: RegExp): boolean {
+        return regex.test(value);
+    }
+
+    regexRuleSet() {
+        return rulesRegex
+    }
+}
+
+type onSuccess = (message: string) => void;
+
+type onError = (message: string) => void;
+
+type onInfo = (message: string) => void;
+
+type onWarning = (message: string) => void;
+
+type onValid = () => void;
+
+type onInvalid = (message: string) => void;
+
+type CodecUtilsType = {
+    base64Encode(str: string): string,
+    base64Decode(str: string): string
+}
+
+type EncryptionUtilsType = {
     md5Encrypt(str: string): string;
-
-    /**
-     * Calculate Hashed Password
-     * @param username - username
-     * @param password - plain password
-     */
     passwordEncrypt(username: string, password: string): string;
-
-    /**
-     * SHA256 Encryption
-     * @param str - plain text
-     */
     sha256Encrypt(str: string): string;
 }
 
-interface OnSuccess {
-    (message: string): void;
+type HttpClientUtilsType = {
+    postRequest(url: string, data: object, isForm?: boolean): AxiosPromise;
+    getRequest(url: string, data?: object): AxiosPromise;
+    instance(): AxiosInstance;
 }
-
-interface OnError {
-    (message: string): void;
-}
-
-interface OnInfo {
-    (message: string): void;
-}
-
-interface OnWarning {
-    (message: string): void;
-}
-
-interface CustomFeedback {
-    onSuccess?: OnSuccess;
-    onError?: OnError;
-    onWarning?: OnWarning;
-    onInfo?: OnInfo;
-}
-
-type success = (msg: string) => void;
-type info = (msg: string) => void;
-type error = (msg: string) => void;
-type warning = (msg: string) => void;
-
-class AckyStackUtils {
-    private readonly _debug: boolean = false;
-
-    /**
-     * Constructor of AckyStack Utils
-     * @param customFeedback
-     * @param debug
-     */
-    constructor(customFeedback?: CustomFeedback, debug?: boolean) {
-        if (customFeedback !== undefined) {
-            if (customFeedback.onSuccess !== undefined) {
-                this.success = customFeedback.onSuccess;
-            }
-            if (customFeedback.onError !== undefined) {
-                this.error = customFeedback.onError;
-            }
-            if (customFeedback.onWarning !== undefined) {
-                this.warning = customFeedback.onWarning;
-            }
-            if (customFeedback.onInfo !== undefined) {
-                this.info = customFeedback.onInfo;
-            }
-        }
-        if (debug) {
-            this._debug = true;
-        }
-    }
-
-
-    CodecUtils(): CodecUtils {
-        return {
-            base64Encode: str => {
-                const result: string = new CodecUtilsImpl(str).base64Encode();
-                if (this._debug) console.log(`Base64 Encode Result: ${result}`)
-                return result;
-            },
-            base64Decode: str => {
-                const result: string = new CodecUtilsImpl(str).base64Decode();
-                if (this._debug) console.log(`Base64 Decode Result: ${result}`)
-                return result;
-            }
-        }
-    }
-
-    EncryptionUtils(): EncryptionUtils {
-        return {
-            md5Encrypt: str => {
-                const result: string = new EncryptionUtilsImpl(str).md5();
-                if (this._debug) console.log(`MD5 Encryption Result: ${result}`)
-                return result;
-            },
-            passwordEncrypt: (username, password) => {
-                const result: string = new EncryptionUtilsImpl(password).hashPasswd(username);
-                if (this._debug) console.log(`Password Encryption Result: ${result}`)
-                return result;
-            },
-            sha256Encrypt: (str) => {
-                const result: string = new EncryptionUtilsImpl(str).sha256();
-                if (this._debug) console.log(`SHA256 Encryption Result: ${result}`)
-                return result;
-            }
-        }
-    }
-
-    RequestUtils(): RequestUtils {
-        const axios = new RequestUtilsImpl({
-            error: (message: string) => {
-                this.error(message)
-            },
-            info: (message: string) => {
-                this.info(message)
-            },
-            warn: (message: string) => {
-                this.warning(message)
-            },
-            success: (message: string) => {
-                this.success(message)
-            }
-        });
-
-        return {
-            post: (url: string, data: object, isForm?: boolean): AxiosPromise => {
-                if (isForm) {
-                    return axios.post(url, data);
-                }
-                return axios.postBody(url, data);
-            },
-            get: (url: string, data?: object): AxiosPromise => {
-                return axios.get(url, data);
-            },
-            instance: (): AxiosInstance => {
-                return axios.instance();
-            }
-        };
-    }
-
-    private readonly success: success = msg => alert(msg);
-
-    private readonly info: info = msg => alert(msg);
-
-    private readonly error: error = msg => alert(msg);
-
-    private readonly warning: warning = msg => alert(msg);
-
-}
-
-export default AckyStackUtils;

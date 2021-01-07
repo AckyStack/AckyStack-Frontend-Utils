@@ -13,6 +13,8 @@ A utility made for AckyStack front end developers. This utilities toolkit cloud 
 
 ```npm install @ackystack/ackystack-utils```
 
+WARNING: The latest 3.0 version haven't officially published!!!
+
 
 
 ##### YARN
@@ -20,72 +22,67 @@ A utility made for AckyStack front end developers. This utilities toolkit cloud 
 
 ```yarn add @ackystack/ackystack-utils```
 
-
+WARNING: The latest 3.0 version haven't officially published!!!
 
 ##### CDN
 
 Add one of the following tag in your HTML document.
 
+WARNING: The latest 3.0 version haven't officially published!!!
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@ackystack/ackystack-utils@latest/dist/ackystack-utils.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/AckyStack/AckyStack-Frontend-Utils/dist/ackystack-utils.min.js"></script>
 ```
 
- or a specific version 
+ or a specific version (IF YOU WANT USE 3.0 PLEASE USE THIS METHOD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@ackystack/ackystack-utils@2.0.0/dist/ackystack-utils.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/AckyStack/AckyStack-Frontend-Utils@dev_3.0/dist/ackystack-utils.min.js"></script>
 ```
 
 
 
-## Usage
+## Usage (for 3.0)
 
 ```javascript
-    // instantiate with default configuration
-    let asu = new AckyStackUtils();
+let acky = new AckyStackUtils();
 
-    /** Encryption Utils*/
+acky.EncryptionUtils().md5Encrypt('1234567890');
 
-	//This method will do exactly what you think (return a string)
-    asu.EncryptionUtils().sha256Encrypt();
-	//This method will do exactly what you think (return a string)
-    asu.EncryptionUtils().md5Encrypt();     
-	//This method will do exactly what you think (return a string)
-    asu.EncryptionUtils().passwordEncrypt();
+acky.EncryptionUtils().passwordEncrypt('1234567890', '1234567890');
 
+acky.EncryptionUtils().sha256Encrypt('1234567890');
 
-    /** Codec Utils*/
+acky.CodecUtils().base64Encode('1234567890');
 
-	//This method will do exactly what you think (return a string)
-    asu.CodecUtils().base64Encode();
-	//This method will do exactly what you think (return a string)
-    asu.CodecUtils().base64Decode();
+acky.CodecUtils().base64Decode('MTIzNDU2Nzg5MA==');
 
+acky.HttpClient().getRequest('test_data.json').then(res => {
+    console.log('Request Succeed');
+    console.log(res);
+}).catch(err => {
+    console.log('err log:', err)
+});
 
-    /** HTTP Request Utils*/
-    
-    // send a get request with axios
-    asu.RequestUtils().get('url', {a: 'hello', b: 1234123}).then(response => {
-        //When the request success and also gets feedback from the server...
-        console.log(response.ret);
-        console.log(response.msg);
-        console.log(response.data);
-    }).catch(reason => {
-        //When the request faild to send, or server send error feedback...
-        //the 'reason' will be either a server response, or a Promise error.
-        console.log(reason);
-    })
-    
-    //send a post request with axios
-    //The post method has three arguments, as you can tell what first and second is. 
-	//The third argument is called 'isForm',
-    //I'm sure about you can tell what does it do from the name.
-    asu.RequestUtils().post('url', {a: 'hello', b: 1234123}, true).then(response => {
-        //do something...
-    }).catch(reason => {
-        //do something else...
-    })
-
+let v = acky.FormValidationUtils()
+const c = [
+    {
+        elementId: 'username',
+        checkPoints: [
+            {
+                validator: (v) => acky.regexValidator(v,/^\d+$/),
+                invalidMessage: 'username must be all numbers.'
+            }
+        ],
+        requiredMessage: 'your username is required'
+    }
+]
+let asyncValidator = v.createAsync(c);
+let triggerValidator = v.createTrigger(c);
+asyncValidator.init();
+document.getElementById('submit-btn').addEventListener('click',ev => {
+    ev.preventDefault();
+    triggerValidator.validate();
+})
 ```
 
 more and more methods coming up ~

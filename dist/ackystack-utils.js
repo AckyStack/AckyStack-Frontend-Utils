@@ -11,6 +11,9 @@ var AckyStackUtils = (function () {
         createAsync(inputs) {
             return new FormValidatorAsyncBuilder(inputs, this.feedback);
         }
+        createTrigger(inputs) {
+            return new FormValidatorTriggerBuilder(inputs, this.feedback);
+        }
     }
     class FormValidatorAsyncBuilder {
         constructor(inputs, feedback) {
@@ -51,9 +54,80 @@ var AckyStackUtils = (function () {
             this.result = false;
         }
         validateHandler(evt, fieldRuleSet) {
+            const that = this;
             console.log('校验事件');
-            this.feedback.onError('test invalid');
-            return;
+            console.log(evt.target['value']);
+            if (evt.target['value'] === undefined || evt.target['value'] === null) {
+                this.onInvalid(fieldRuleSet.requiredMessage);
+                console.log('错误：undefined 或 null');
+                return;
+            }
+            if (!/.+/.test(evt.target['value'])) {
+                this.onInvalid(fieldRuleSet.requiredMessage);
+                console.log('错误：required');
+                return;
+            }
+            let r = [];
+            for (const cp of fieldRuleSet.checkPoints) {
+                that.result = cp.validator(evt.target['value']);
+                r.push(that.result);
+                if (!that.result) {
+                    this.onInvalid(cp.invalidMessage);
+                    break;
+                }
+            }
+            if (!r.includes(false)) {
+                this.onValid();
+            }
+        }
+    }
+    class FormValidatorTriggerBuilder {
+        constructor(inputs, feedback) {
+            this.result = false;
+            this.inputs = inputs;
+            this.feedback = feedback;
+        }
+        validate() {
+            this.inputs.forEach(value => {
+                this.check(document.getElementById(value.elementId)['value'], value);
+            });
+            return this;
+        }
+        onValid() {
+            this.feedback.onValid();
+            this.result = true;
+        }
+        onInvalid(msg) {
+            this.feedback.onError(msg);
+            this.result = false;
+        }
+        check(val, fieldRuleSet) {
+            const that = this;
+            if (val === undefined || val === null) {
+                this.onInvalid(fieldRuleSet.requiredMessage);
+                console.log('错误：undefined 或 null');
+                return;
+            }
+            if (!/.+/.test(val)) {
+                this.onInvalid(fieldRuleSet.requiredMessage);
+                console.log('错误：required');
+                return;
+            }
+            let r = [];
+            for (const cp of fieldRuleSet.checkPoints) {
+                that.result = cp.validator(val);
+                r.push(that.result);
+                if (!that.result) {
+                    this.onInvalid(cp.invalidMessage);
+                    break;
+                }
+            }
+            if (!r.includes(false)) {
+                this.onValid();
+            }
+        }
+        getResult() {
+            return this.result;
         }
     }
 
@@ -2794,7 +2868,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory();
+    		module.exports = factory();
     	}
     }(commonjsGlobal, function () {
 
@@ -3586,7 +3660,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -3885,7 +3959,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -3956,7 +4030,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -4100,7 +4174,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -4231,7 +4305,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -4494,7 +4568,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -4639,7 +4713,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -4833,7 +4907,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, sha256);
+    		module.exports = factory(core, sha256);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -4908,7 +4982,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, x64Core);
+    		module.exports = factory(core, x64Core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -5229,7 +5303,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, x64Core, sha512);
+    		module.exports = factory(core, x64Core, sha512);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -5307,7 +5381,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, x64Core);
+    		module.exports = factory(core, x64Core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -5628,7 +5702,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -5890,7 +5964,7 @@ var AckyStackUtils = (function () {
     (function (root, factory) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core);
+    		module.exports = factory(core);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -6028,7 +6102,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, sha1, hmac);
+    		module.exports = factory(core, sha1, hmac);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -6168,7 +6242,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, sha1, hmac);
+    		module.exports = factory(core, sha1, hmac);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -6297,7 +6371,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, evpkdf);
+    		module.exports = factory(core, evpkdf);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7182,7 +7256,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7257,7 +7331,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7310,7 +7384,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7421,7 +7495,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7470,7 +7544,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7505,7 +7579,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7549,7 +7623,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7588,7 +7662,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7623,7 +7697,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7665,7 +7739,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7690,7 +7764,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, cipherCore);
+    		module.exports = factory(core, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7751,7 +7825,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
+    		module.exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -7980,7 +8054,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
+    		module.exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -8754,7 +8828,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
+    		module.exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -8888,7 +8962,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
+    		module.exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -9075,7 +9149,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
+    		module.exports = factory(core, encBase64, md5$1, evpkdf, cipherCore);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 
@@ -9260,7 +9334,7 @@ var AckyStackUtils = (function () {
     (function (root, factory, undef) {
     	{
     		// CommonJS
-    		module.exports = exports = factory(core, x64Core, libTypedarrays, encUtf16, encBase64, md5$1, sha1, sha256, sha224, sha512, sha384, sha3, ripemd160, hmac, pbkdf2, evpkdf, cipherCore, modeCfb, modeCtr, modeCtrGladman, modeOfb, modeEcb, padAnsix923, padIso10126, padIso97971, padZeropadding, padNopadding, formatHex, aes, tripledes, rc4, rabbit, rabbitLegacy);
+    		module.exports = factory(core, x64Core, libTypedarrays, encUtf16, encBase64, md5$1, sha1, sha256, sha224, sha512, sha384, sha3, ripemd160, hmac, pbkdf2, evpkdf, cipherCore, modeCfb, modeCtr, modeCtrGladman, modeOfb, modeEcb, padAnsix923, padIso10126, padIso97971, padZeropadding, padNopadding, formatHex, aes, tripledes, rc4, rabbit, rabbitLegacy);
     	}
     }(commonjsGlobal, function (CryptoJS) {
 

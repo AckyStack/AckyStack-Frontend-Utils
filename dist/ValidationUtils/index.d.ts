@@ -3,19 +3,22 @@ interface FormInputRules {
     checkPoints: rule[];
     requiredMessage: string;
 }
+declare type customValidator = (value: string) => boolean;
 declare type rule = {
-    validator: (value: string) => boolean;
+    validator: customValidator;
     invalidMessage: string;
-    validMessage: string;
 };
+declare type onValid = () => void;
+declare type onInvalid = (message: string) => void;
 interface FeedbackStylesControl {
-    onValid(): void;
-    onError(msg: string): void;
+    onValid: onValid;
+    onError: onInvalid;
 }
 export default class FormValidator {
     private readonly feedback;
-    constructor(onValid: () => void, onInvalid: (msg: string) => void);
+    constructor(onValid: onValid, onInvalid: onInvalid);
     createAsync(inputs: FormInputRules[]): FormValidatorAsyncBuilder;
+    createTrigger(inputs: FormInputRules[]): FormValidatorTriggerBuilder;
 }
 declare class FormValidatorAsyncBuilder {
     private inputs;
@@ -28,5 +31,16 @@ declare class FormValidatorAsyncBuilder {
     private onValid;
     private onInvalid;
     private validateHandler;
+}
+declare class FormValidatorTriggerBuilder {
+    private inputs;
+    private result;
+    private feedback;
+    constructor(inputs: FormInputRules[], feedback: FeedbackStylesControl);
+    validate(): this;
+    private onValid;
+    private onInvalid;
+    private check;
+    getResult(): boolean;
 }
 export {};

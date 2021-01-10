@@ -59,12 +59,10 @@ export default class AckyStackUtils {
     };
 
     constructor(configuration?: Configuration) {
-        if (configuration !== undefined || null) {
-
-            if (configuration.debug !== undefined || null) {
+        if (typeof configuration !== "undefined") {
+            if (typeof configuration.debug === "boolean") {
                 this.configuration.debug = configuration.debug
             }
-
             if (configuration.requestCustomFeedback !== undefined || null) {
                 if (configuration.requestCustomFeedback.onError !== undefined || null) {
                     this.configuration.requestCustomFeedback.onError = configuration.requestCustomFeedback.onError;
@@ -84,11 +82,11 @@ export default class AckyStackUtils {
             }
 
             if (configuration.formValidationCustomFeedback !== undefined || null) {
-                if (configuration.formValidationCustomFeedback.onInvalid === undefined || null) {
+                if (configuration.formValidationCustomFeedback.onInvalid !== undefined || null) {
                     this.configuration.formValidationCustomFeedback.onInvalid = configuration.formValidationCustomFeedback.onInvalid;
                 }
 
-                if (configuration.formValidationCustomFeedback.onValid === undefined || null) {
+                if (configuration.formValidationCustomFeedback.onValid !== undefined || null) {
                     this.configuration.formValidationCustomFeedback.onValid = configuration.formValidationCustomFeedback.onValid;
                 }
             }

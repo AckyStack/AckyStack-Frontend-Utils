@@ -94,8 +94,8 @@ class FormValidatorAsyncBuilder {
 
     private validateHandler(evt: Event, fieldRuleSet: FormInputRules): void {
         const that = this;
-        console.log('校验事件');
-        console.log(evt.target['value']);
+        //console.log('校验事件');
+        //console.log(evt.target['value']);
         let resObj: validationFeedbackResult = {
             elementId: fieldRuleSet.elementId,
             validationResult: false
@@ -103,13 +103,11 @@ class FormValidatorAsyncBuilder {
         if (evt.target['value'] === undefined || evt.target['value'] === null) {
             resObj.message = fieldRuleSet.requiredMessage;
             this.onInvalid(resObj);
-            console.log('错误：undefined 或 null');
             return;
         }
         if (!/.+/.test(evt.target['value'])) {
             resObj.message = fieldRuleSet.requiredMessage;
             this.onInvalid(resObj);
-            console.log('错误：required');
             return;
         }
         let r: boolean[] = [];
@@ -165,13 +163,11 @@ class FormValidatorTriggerBuilder {
         if (val === undefined || val === null) {
             resObj.message = fieldRuleSet.requiredMessage;
             this.onInvalid(resObj);
-            console.log('错误：undefined 或 null');
             return;
         }
         if (!/.+/.test(val)) {
             resObj.message = fieldRuleSet.requiredMessage;
             this.onInvalid(resObj);
-            console.log('错误：required');
             return;
         }
         let r: boolean[] = [];

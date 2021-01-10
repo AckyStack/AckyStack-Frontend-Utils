@@ -49,11 +49,11 @@ export default class AckyStackUtils {
             }
         },
         formValidationCustomFeedback: {
-            onValid: () => {
-                console.log('表单验证成功! ');
+            onValid: res => {
+                console.log(`表单验证成功`);
             },
-            onInvalid: message => {
-                console.error(`表单验证错误: ${message}`);
+            onInvalid: res => {
+                console.error(`表单验证错误, element ID: ${res.elementId}, message: ${res.message}`);
             }
         }
     };
@@ -92,7 +92,7 @@ export default class AckyStackUtils {
                     this.configuration.formValidationCustomFeedback.onValid = configuration.formValidationCustomFeedback.onValid;
                 }
             }
-            
+
         }
 
         if (this.configuration.debug) {
@@ -101,8 +101,7 @@ export default class AckyStackUtils {
     }
 
     FormValidationUtils() {
-        return new FormValidator(() => this.configuration.formValidationCustomFeedback.onValid(),
-            msg => this.configuration.formValidationCustomFeedback.onInvalid(msg))
+        return new FormValidator(r => this.configuration.formValidationCustomFeedback.onValid(r), r => this.configuration.formValidationCustomFeedback.onInvalid(r))
     }
 
     CodecUtils(): CodecUtilsType {
@@ -189,9 +188,15 @@ type onInfo = (message: string) => void;
 
 type onWarning = (message: string) => void;
 
-type onValid = () => void;
+type onValid = (res: validationFeedbackResult) => void;
 
-type onInvalid = (message: string) => void;
+type onInvalid = (res: validationFeedbackResult) => void;
+
+type validationFeedbackResult = {
+    elementId: string,
+    validationResult: boolean,
+    message?: string,
+}
 
 type CodecUtilsType = {
     base64Encode(str: string): string,

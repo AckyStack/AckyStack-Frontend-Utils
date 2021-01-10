@@ -113,8 +113,13 @@ declare type onSuccess = (message: string) => void;
 declare type onError = (message: string) => void;
 declare type onInfo = (message: string) => void;
 declare type onWarning = (message: string) => void;
-declare type onValid = () => void;
-declare type onInvalid = (message: string) => void;
+declare type onValid = (res: validationFeedbackResult) => void;
+declare type onInvalid = (res: validationFeedbackResult) => void;
+declare type validationFeedbackResult = {
+    elementId: string;
+    validationResult: boolean;
+    message?: string;
+};
 declare type CodecUtilsType = {
     base64Encode(str: string): string;
     base64Decode(str: string): string;

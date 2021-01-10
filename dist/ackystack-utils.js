@@ -45,25 +45,31 @@ var AckyStackUtils = (function () {
         getResult() {
             return this.result;
         }
-        onValid() {
-            this.feedback.onValid();
+        onValid(cfg) {
+            this.feedback.onValid(cfg);
             this.result = true;
         }
-        onInvalid(msg) {
-            this.feedback.onError(msg);
+        onInvalid(cfg) {
+            this.feedback.onError(cfg);
             this.result = false;
         }
         validateHandler(evt, fieldRuleSet) {
             const that = this;
             console.log('校验事件');
             console.log(evt.target['value']);
+            let resObj = {
+                elementId: fieldRuleSet.elementId,
+                validationResult: false
+            };
             if (evt.target['value'] === undefined || evt.target['value'] === null) {
-                this.onInvalid(fieldRuleSet.requiredMessage);
+                resObj.message = fieldRuleSet.requiredMessage;
+                this.onInvalid(resObj);
                 console.log('错误：undefined 或 null');
                 return;
             }
             if (!/.+/.test(evt.target['value'])) {
-                this.onInvalid(fieldRuleSet.requiredMessage);
+                resObj.message = fieldRuleSet.requiredMessage;
+                this.onInvalid(resObj);
                 console.log('错误：required');
                 return;
             }
@@ -72,12 +78,14 @@ var AckyStackUtils = (function () {
                 that.result = cp.validator(evt.target['value']);
                 r.push(that.result);
                 if (!that.result) {
-                    this.onInvalid(cp.invalidMessage);
+                    resObj.message = cp.invalidMessage;
+                    this.onInvalid(resObj);
                     break;
                 }
             }
             if (!r.includes(false)) {
-                this.onValid();
+                resObj.validationResult = that.result;
+                this.onValid(resObj);
             }
         }
     }
@@ -93,23 +101,29 @@ var AckyStackUtils = (function () {
             });
             return this;
         }
-        onValid() {
-            this.feedback.onValid();
+        onValid(res) {
+            this.feedback.onValid(res);
             this.result = true;
         }
-        onInvalid(msg) {
-            this.feedback.onError(msg);
+        onInvalid(res) {
+            this.feedback.onError(res);
             this.result = false;
         }
         check(val, fieldRuleSet) {
             const that = this;
+            let resObj = {
+                elementId: fieldRuleSet.elementId,
+                validationResult: false
+            };
             if (val === undefined || val === null) {
-                this.onInvalid(fieldRuleSet.requiredMessage);
+                resObj.message = fieldRuleSet.requiredMessage;
+                this.onInvalid(resObj);
                 console.log('错误：undefined 或 null');
                 return;
             }
             if (!/.+/.test(val)) {
-                this.onInvalid(fieldRuleSet.requiredMessage);
+                resObj.message = fieldRuleSet.requiredMessage;
+                this.onInvalid(resObj);
                 console.log('错误：required');
                 return;
             }
@@ -118,12 +132,14 @@ var AckyStackUtils = (function () {
                 that.result = cp.validator(val);
                 r.push(that.result);
                 if (!that.result) {
-                    this.onInvalid(cp.invalidMessage);
+                    resObj.message = cp.invalidMessage;
+                    this.onInvalid(resObj);
                     break;
                 }
             }
             if (!r.includes(false)) {
-                this.onValid();
+                resObj.validationResult = that.result;
+                this.onValid(resObj);
             }
         }
         getResult() {
@@ -13439,11 +13455,11 @@ var AckyStackUtils = (function () {
                     }
                 },
                 formValidationCustomFeedback: {
-                    onValid: () => {
-                        console.log('表单验证成功! ');
+                    onValid: res => {
+                        console.log(`表单验证成功`);
                     },
-                    onInvalid: message => {
-                        console.error(`表单验证错误: ${message}`);
+                    onInvalid: res => {
+                        console.error(`表单验证错误, element ID: ${res.elementId}, message: ${res.message}`);
                     }
                 }
             };
@@ -13479,7 +13495,7 @@ var AckyStackUtils = (function () {
             }
         }
         FormValidationUtils() {
-            return new FormValidator(() => this.configuration.formValidationCustomFeedback.onValid(), msg => this.configuration.formValidationCustomFeedback.onInvalid(msg));
+            return new FormValidator(r => this.configuration.formValidationCustomFeedback.onValid(r), r => this.configuration.formValidationCustomFeedback.onInvalid(r));
         }
         CodecUtils() {
             return {

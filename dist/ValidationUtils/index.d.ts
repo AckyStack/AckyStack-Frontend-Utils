@@ -4,12 +4,17 @@ interface FormInputRules {
     requiredMessage: string;
 }
 declare type customValidator = (value: string) => boolean;
+declare type validationFeedbackResult = {
+    elementId: string;
+    validationResult: boolean;
+    message?: string;
+};
 declare type rule = {
     validator: customValidator;
     invalidMessage: string;
 };
-declare type onValid = () => void;
-declare type onInvalid = (message: string) => void;
+declare type onValid = (res: validationFeedbackResult) => void;
+declare type onInvalid = (res: validationFeedbackResult) => void;
 interface FeedbackStylesControl {
     onValid: onValid;
     onError: onInvalid;

@@ -4,25 +4,32 @@ interface FormInputRules {
     requiredMessage: string
 }
 
-type customValidator = (value:string)=>boolean;
+type customValidator = (value: string) => boolean;
+
+type validationFeedbackResult = {
+    elementId: string,
+    validationResult: boolean,
+    message?: string,
+}
 
 type rule = {
     validator: customValidator,
     invalidMessage: string,
 }
-type onValid = () => void;
 
-type onInvalid = (message: string) => void;
+type onValid = (res: validationFeedbackResult) => void;
+
+type onInvalid = (res: validationFeedbackResult) => void;
 
 interface FeedbackStylesControl {
-    onValid:onValid,
-    onError:onInvalid
+    onValid: onValid,
+    onError: onInvalid
 }
 
 export default class FormValidator {
     private readonly feedback: FeedbackStylesControl;
 
-    constructor(onValid:onValid, onInvalid:onInvalid) {
+    constructor(onValid: onValid, onInvalid: onInvalid) {
         this.feedback = {
             onValid: onValid,
             onError: onInvalid
@@ -42,6 +49,7 @@ class FormValidatorAsyncBuilder {
     private inputs: FormInputRules[];
     private result: boolean = false;
     private feedback: FeedbackStylesControl;
+
     constructor(inputs: FormInputRules[], feedback: FeedbackStylesControl) {
         this.inputs = inputs;
         this.feedback = feedback;
@@ -74,13 +82,13 @@ class FormValidatorAsyncBuilder {
         return this.result;
     }
 
-    private onValid() {
-        this.feedback.onValid();
+    private onValid(cfg: validationFeedbackResult) {
+        this.feedback.onValid(cfg);
         this.result = true;
     }
 
-    private onInvalid(msg: string) {
-        this.feedback.onError(msg);
+    private onInvalid(cfg: validationFeedbackResult) {
+        this.feedback.onError(cfg);
         this.result = false;
     }
 
@@ -88,27 +96,35 @@ class FormValidatorAsyncBuilder {
         const that = this;
         console.log('校验事件');
         console.log(evt.target['value']);
+        let resObj: validationFeedbackResult = {
+            elementId: fieldRuleSet.elementId,
+            validationResult: false
+        };
         if (evt.target['value'] === undefined || evt.target['value'] === null) {
-            this.onInvalid(fieldRuleSet.requiredMessage);
+            resObj.message = fieldRuleSet.requiredMessage;
+            this.onInvalid(resObj);
             console.log('错误：undefined 或 null');
             return;
         }
         if (!/.+/.test(evt.target['value'])) {
-            this.onInvalid(fieldRuleSet.requiredMessage);
+            resObj.message = fieldRuleSet.requiredMessage;
+            this.onInvalid(resObj);
             console.log('错误：required');
             return;
         }
-        let r:boolean[]=[];
+        let r: boolean[] = [];
         for (const cp of fieldRuleSet.checkPoints) {
             that.result = cp.validator(evt.target['value']);
             r.push(that.result);
-            if (!that.result){
-                this.onInvalid(cp.invalidMessage);
+            if (!that.result) {
+                resObj.message = cp.invalidMessage;
+                this.onInvalid(resObj);
                 break;
             }
         }
-        if (!r.includes(false)){
-            this.onValid();
+        if (!r.includes(false)) {
+            resObj.validationResult = that.result;
+            this.onValid(resObj);
         }
     }
 }
@@ -125,42 +141,52 @@ class FormValidatorTriggerBuilder {
 
     validate(): this {
         this.inputs.forEach(value => {
-           this.check(document.getElementById(value.elementId)['value'],value)
+            this.check(document.getElementById(value.elementId)['value'], value)
         });
         return this;
     }
-    private onValid() {
-        this.feedback.onValid();
+
+    private onValid(res: validationFeedbackResult) {
+        this.feedback.onValid(res);
         this.result = true;
     }
 
-    private onInvalid(msg: string) {
-        this.feedback.onError(msg);
+    private onInvalid(res: validationFeedbackResult) {
+        this.feedback.onError(res);
         this.result = false;
     }
-    private check(val:string,fieldRuleSet: FormInputRules):void{
+
+    private check(val: string, fieldRuleSet: FormInputRules): void {
         const that = this;
+        let resObj: validationFeedbackResult = {
+            elementId: fieldRuleSet.elementId,
+            validationResult: false
+        };
         if (val === undefined || val === null) {
-            this.onInvalid(fieldRuleSet.requiredMessage);
+            resObj.message = fieldRuleSet.requiredMessage;
+            this.onInvalid(resObj);
             console.log('错误：undefined 或 null');
             return;
         }
         if (!/.+/.test(val)) {
-            this.onInvalid(fieldRuleSet.requiredMessage);
+            resObj.message = fieldRuleSet.requiredMessage;
+            this.onInvalid(resObj);
             console.log('错误：required');
             return;
         }
-        let r:boolean[]=[];
+        let r: boolean[] = [];
         for (const cp of fieldRuleSet.checkPoints) {
             that.result = cp.validator(val);
             r.push(that.result);
-            if (!that.result){
-                this.onInvalid(cp.invalidMessage);
+            if (!that.result) {
+                resObj.message = cp.invalidMessage;
+                this.onInvalid(resObj);
                 break;
             }
         }
-        if (!r.includes(false)){
-            this.onValid();
+        if (!r.includes(false)) {
+            resObj.validationResult = that.result;
+            this.onValid(resObj);
         }
     }
 

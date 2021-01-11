@@ -104,6 +104,108 @@ document.getElementById('submit-btn').addEventListener('click', ev => {
 
 ```
 
+## form validation regex
+
+### 数据验证规则类型表
+
+| Key Name  | 说明  | 
+| -------------------- | -------------------- |
+| **字符基本格式**|  | 
+| english              | 纯英文字母 |
+| chinese              | 纯中文 |
+| alphanum             | 字母和数字组合 |
+| upper                | 需有大写 |
+| lower                | 需有小写 |
+| hasLetter            | 需有字母 |
+| hasDigit             | 需有数字 |
+| hasSpec              | 需有特殊字符，!@#$%^&*?() |
+| nospace              | 不含有空格 |
+| nospec               | 不含特殊字符 |
+| nodbc                | 不含全角特殊字符 |
+| norepeat             | 不含任何重复字符 |
+| **数字格式**|  | 
+| float                | 可含浮点的数字 |
+| integer              | 整数 |
+| positivefloat        | 正的数字 |
+| positiveint          | 正整数 |
+| decimal              | 小数点1位及以上 |
+| currency             | 货币，2小数，带分号|
+| percent              | 百分数 |
+| score                | 考试分数，小数部分只能为.5 |
+| even                 | 偶数 |
+| odd                  | 奇数 |
+| **时间格式** |  | 
+| date                 | 日期 2017-7-7或2017/7/7，0补位非必须，含大小月、闰月检测  |
+| time                 | 时间 12:12:12，时分秒个位须0补位 |
+| datetime             | 日期 + 时间 如2017-07-07 12:02:02, 0补位非必须 |
+| year                 | 年份 1900-2099 |
+| month                | 月份 1-12，不带补位，下同 |
+| day                  | 日 1-31 |
+| hour                 | 小时 0-23 |
+| minute               | 分钟 0-59 |
+| hmt                  | 时分，格式：10:59 |
+| **账号信息格式** |  | 
+| qq                   | QQ号 5-11位 | 
+| age                  | 年龄 0-129岁 | 
+| account              | 账号名，字母数字下划线连接线组合，首位字母，同**微信号**规则, 但没限制长度 |
+| password             | 密码，最少1大写字母、1小写字母、1数字、1特殊字符，没限制长度 |
+| mobile               | 手机13700000000，融合2017新号规则, 即包括16/19等开头的，+86、86可选 |
+| telphone             | 电话手机混合 |
+| phone                | 固话，可带分机, +86、86可选 |
+| idcard               | 身份证，含地区、生日、验证数等规则，不含尾号验证 |
+| **区域信息格式** |  | 
+| zipcode              | 邮编 | 
+| citycode             | 6位地区代码
+| address              | 住址，必须含中文、县/区/旗/乡/镇/街道/州的某项名称 ||
+| autocard             | 车牌号码，支持新能源车牌号及港澳等 |
+| longitude            | 地理位置——经度，度制，小数点1~15位 |
+| latitude             | 地理位置——纬度，度制，小数点1~15位 |
+| londms               | 地理位置——经度，度分秒制 |
+| latdms               | 地理位置——纬度，度分秒制 |
+| **网络地址格式** |  | 
+| email                | 邮箱地址 |
+| url                  | 网址（包括http、ftp、ws） |
+| ip                   | IPv4地址 |
+| ipv6                 | IPV6地址 |
+| port                 | 端口 |
+| mac                  | MAC地址 |
+| domain               | 合法域名 |
+| ftp                  | ftp地址 |
+| http                 | http地址 |
+| ws                   | websocket地址 |
+| thunder              | 迅雷协议地址 |
+| ed2k                 | 电驴协议地址 |
+| magnet               | 磁力链地址 |
+| imgurl               | web网页图片地址 |
+| **商业代码格式** |  | 
+| bizcode              | 统一信用代码  |
+| passport             | 护照代码  |
+| ticker               | 股票代码  |
+| invoice              | 增值税发票代码 |
+| bankcard             | 银行卡号（宽泛型）|
+| pbcard               | 银行卡号（仅限国内个人卡）|
+| isbn                 | 书号（仅限13位）|
+| approval             | 文号 政字〔2004〕第18号 或 政字[2004] 18号 |
+| **编码格式**|  | 
+| ascii                | ASCII码 |
+| base64               | BASE64码 |
+| md5                  | md5码 |
+| uuid                 | UUID码，连接线-非必须 |
+| hex                  | 十六进制字符串 |
+| color                | 颜色码，16进制，三位或六位，#非必须 |
+| jwt                  | JSON Web Token字符串|
+| tag                  | 闭合标签元素|
+| **文件格式**|  | 
+| file                 | 合法文件名 |
+| path                 | 合法文件路径名，含目录 |
+| linuxfile            | linux推荐文件名 |
+| doc                  | 合法文档文件名 |
+
+All of these copied from https://github.com/wujianqi/qi-validator
+
+
+------
+
 more and more methods coming up ~
 
 ## Contributing

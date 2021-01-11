@@ -44,6 +44,7 @@ export declare const rulesRegex: {
     ws: RegExp;
     account: RegExp;
     password: RegExp;
+    complexPassword: RegExp;
     hex: RegExp;
     color: RegExp;
     ascii: RegExp;

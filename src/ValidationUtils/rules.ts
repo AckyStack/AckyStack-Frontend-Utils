@@ -7,9 +7,9 @@ export const norepeat = (content: string, num = 1) =>
     new RegExp(`^(?!.*(${ content }).*\\1{${ num },}).+$`, 'i');
 
 const turl = (prefix: string, files = '') => {
-    let s = `^(${ prefix }):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&:/~\\+#]*[\\w\\-\\@?^=%&/~\\+#])?`;
+    let s = `^(${prefix}):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&:/~\\+#]*[\\w\\-\\@?^=%&/~\\+#])?`;
 
-    if (files !== '') s = s + `.(${ files })+`;
+    if (files !== '') s = s + `.(${files})+`;
     s = s + '$';
     return new RegExp(s, 'i');
 }
@@ -64,8 +64,9 @@ export const rulesRegex = {
     ftp: turl('ftp'),
     http: turl('https?'),
     ws: turl('wss?'),
-    account: /^[A-Za-z]+[\w\-_]*[A-Za-z0-9]+$/,
-    password: /^(?=.*\d)(?=.*[A-Z]{1,})(?=.*[a-z]{1,})(?=.*[!@#$%^&*?\(\)]).*$/,
+    account: /^([a-zA-Z])[a-zA-Z_-]*[\w_-]*[\S]$|^([a-zA-Z])[0-9_-]*[\S]$|^[a-zA-Z]*[\S]$/,
+    password: /^(?=.*\d)(?=.*[A-Z]{1,})(?=.*[a-z]{1,}).*$/,
+    complexPassword: /^(?=.*\d)(?=.*[A-Z]{1,})(?=.*[a-z]{1,})(?=.*[!@#$%^&*?\(\)]).*$/,
     hex: /^[0-9A-F]+$/i,
     color: /^#?([0-9A-F]{3}|[0-9A-F]{6})$/i,
     ascii: /^[\u0000-\u007F]+$/,
@@ -104,6 +105,6 @@ export const rulesRegex = {
     path: /^[a-zA-Z]:\\([^<>/\\\|:''\*\?]+\\?)+$/,
     file: /^[^<>/\\\|:''\*\?]+\.\w+$/,
     linuxfile: /^[^+-./\t\b@#$%*()\[\]][^/\t\b@#$%*()\[\]]{1,254}$/,
-    imgurl: turl('https?','gif|png|jpg|jpeg|webp|svg'),
+    imgurl: turl('https?', 'gif|png|jpg|jpeg|webp|svg'),
     doc: ext('pdf|txt|rtf|wps|doc|docx|xls|xlsx|ppt|pptx')
 }

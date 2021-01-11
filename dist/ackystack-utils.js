@@ -55,8 +55,6 @@ var AckyStackUtils = (function () {
         }
         validateHandler(evt, fieldRuleSet) {
             const that = this;
-            console.log('校验事件');
-            console.log(evt.target['value']);
             let resObj = {
                 elementId: fieldRuleSet.elementId,
                 validationResult: false
@@ -64,13 +62,11 @@ var AckyStackUtils = (function () {
             if (evt.target['value'] === undefined || evt.target['value'] === null) {
                 resObj.message = fieldRuleSet.requiredMessage;
                 this.onInvalid(resObj);
-                console.log('错误：undefined 或 null');
                 return;
             }
             if (!/.+/.test(evt.target['value'])) {
                 resObj.message = fieldRuleSet.requiredMessage;
                 this.onInvalid(resObj);
-                console.log('错误：required');
                 return;
             }
             let r = [];
@@ -118,13 +114,11 @@ var AckyStackUtils = (function () {
             if (val === undefined || val === null) {
                 resObj.message = fieldRuleSet.requiredMessage;
                 this.onInvalid(resObj);
-                console.log('错误：undefined 或 null');
                 return;
             }
             if (!/.+/.test(val)) {
                 resObj.message = fieldRuleSet.requiredMessage;
                 this.onInvalid(resObj);
-                console.log('错误：required');
                 return;
             }
             let r = [];
@@ -13463,8 +13457,8 @@ var AckyStackUtils = (function () {
                     }
                 }
             };
-            if (configuration !== undefined || null) {
-                if (configuration.debug !== undefined || null) {
+            if (typeof configuration !== "undefined") {
+                if (typeof configuration.debug === "boolean") {
                     this.configuration.debug = configuration.debug;
                 }
                 if (configuration.requestCustomFeedback !== undefined || null) {
@@ -13482,10 +13476,10 @@ var AckyStackUtils = (function () {
                     }
                 }
                 if (configuration.formValidationCustomFeedback !== undefined || null) {
-                    if (configuration.formValidationCustomFeedback.onInvalid === undefined || null) {
+                    if (configuration.formValidationCustomFeedback.onInvalid !== undefined || null) {
                         this.configuration.formValidationCustomFeedback.onInvalid = configuration.formValidationCustomFeedback.onInvalid;
                     }
-                    if (configuration.formValidationCustomFeedback.onValid === undefined || null) {
+                    if (configuration.formValidationCustomFeedback.onValid !== undefined || null) {
                         this.configuration.formValidationCustomFeedback.onValid = configuration.formValidationCustomFeedback.onValid;
                     }
                 }

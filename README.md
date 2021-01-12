@@ -222,6 +222,8 @@ Please contact us if you need any help or just chill out:
 - **Discord:** `coming soon~`
 - **QQ Group (Chinese):**  `644487246`
 
+------
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
 
 
 
